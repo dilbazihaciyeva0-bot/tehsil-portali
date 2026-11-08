@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="az" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Məktəb.az - Milli Elektron Təhsil Portalı</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        edu: {
+                            green: '#10b981',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            purple: '#8b5cf6',
+                            teal: '#14b8a6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fredoka:wght@500;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .fredoka { font-family: 'Fredoka', cursive; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.95);
+            border: 1px solid rgba(51, 65, 85, 0.9);
+        }
+        .nav-active {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
+
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-200 dark:border-slate-800 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('teacher-portal')">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-600 to-edu-purple flex items-center justify-center text-white text-2xl shadow-lg shadow-brand-500/30">
+                        <i class="fa-solid fa-school"></i>
+                    </div>
+                    <div>
+                        <span class="fredoka text-2xl font-bold bg-gradient-to-r from-brand-600 via-edu-purple to-edu-rose bg-clip-text text-transparent">Məktəb.az</span>
+                        <span class="block text-xs text-slate-500 dark:text-slate-400 font-semibold">Vahid Məktəb İdarəetmə Portalı</span>
+                    </div>
+                </div>
+
+                <!-- Role Selector & Theme Toggle -->
+                <div class="flex items-center gap-3">
+                    <!-- Switch View Mode -->
+                    <div class="hidden sm:flex bg-slate-200/80 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold">
+                        <button onclick="setRole('teacher')" id="role-btn-teacher" class="px-3 py-1.5 rounded-lg transition-all bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm">
+                            <i class="fa-solid fa-chalkboard-user mr-1"></i> Müəllim Rejimi
+                        </button>
+                        <button onclick="setRole('student')" id="role-btn-student" class="px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400">
+                            <i class="fa-solid fa-user-graduate mr-1"></i> Şagird Rejimi
+                        </button>
+                    </div>
+
+                    <button id="themeToggle" onclick="toggleDarkMode()" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+                        <i class="fa-solid fa-moon dark:hidden"></i>
+                        <i class="fa-solid fa-sun hidden dark:block"></i>
+                    </button>
+
+                    <!-- User Avatar Pill -->
+                    <div class="flex items-center gap-2.5 p-1.5 pl-3 bg-slate-100 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
+                        <div class="text-right hidden md:block">
+                            <span id="activeUserName" class="block text-xs font-bold text-slate-700 dark:text-slate-200">Leyla Əliyeva</span>
+                            <span id="activeUserRole" class="block text-[10px] text-brand-600 dark:text-brand-400 font-medium">Riyaziyyat Müəllimi (4-A)</span>
+                        </div>
+                        <div id="userAvatar" class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                            LƏ
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Navigation Bar -->
+            <div class="overflow-x-auto py-2 border-t border-slate-200/60 dark:border-slate-800">
+                <nav class="flex space-x-2 min-w-max">
+                    <button onclick="switchTab('teacher-portal')" id="nav-teacher-portal" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-chalkboard text-brand-600"></i> Müəllim Kabineti
+                    </button>
+                    <button onclick="switchTab('student-portal')" id="nav-student-portal" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-id-card text-edu-purple"></i> Şagird Kabineti
+                    </button>
+                    <button onclick="switchTab('journal')" id="nav-journal" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-book-open text-edu-teal"></i> Sinif Jurnalı
+                    </button>
+                    <button onclick="switchTab('e-lessons')" id="nav-e-lessons" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-laptop-code text-edu-amber"></i> Elektron Dərslər
+                    </button>
+                    <button onclick="switchTab('assignments')" id="nav-assignments" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-list-check text-edu-rose"></i> Tapşırıqlar
+                    </button>
+                    <button onclick="switchTab('tests')" id="nav-tests" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-square-poll-vertical text-brand-500"></i> Testlər
+                    </button>
+                    <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-btn px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <i class="fa-solid fa-chart-line text-edu-green"></i> Nəticələrin Qiymətləndirilməsi
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- ================= 1. MÜƏLLİM KABİNETİ ================= -->
+        <section id="tab-teacher-portal" class="tab-content space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Müəllim Kabineti</h1>
+                    <p class="text-xs text-slate-500">Xoş gəlmisiniz! 4-A sinfi üzrə gündəlik tədris fəaliyyətiniz və statistikası.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="openAssignModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs shadow-md flex items-center gap-2 transition">
+                        <i class="fa-solid fa-plus"></i> Yeni Tapşırıq Təyin Et
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Quick Stats -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-5 rounded-2xl border flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-brand-500/10 text-brand-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-medium">Sinfdə Şagird Sayı</span>
+                        <h4 class="fredoka text-2xl font-bold text-slate-800 dark:text-white">24 Şagird</h4>
+                        <span class="text-[10px] text-emerald-500 font-semibold">Bugünkü davamiyyət: 96%</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-edu-purple/10 text-edu-purple flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-medium">Orta Qiymət (4-A)</span>
+                        <h4 class="fredoka text-2xl font-bold text-slate-800 dark:text-white">8.6 / 10</h4>
+                        <span class="text-[10px] text-emerald-500 font-semibold">+0.4 bənd yüksəliş</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-edu-amber/10 text-edu-amber flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-medium">Yoxlanılacaq Tapşırıqlar</span>
+                        <h4 class="fredoka text-2xl font-bold text-slate-800 dark:text-white">6 Qalır</h4>
+                        <span class="text-[10px] text-amber-500 font-semibold">Təcili yoxlanılmalıdır</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-edu-green/10 text-edu-green flex items-center justify-center text-xl font-bold">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 font-medium">Planlaşdırılmış Dərslər</span>
+                        <h4 class="fredoka text-2xl font-bold text-slate-800 dark:text-white">12 Mövzu</h4>
+                        <span class="text-[10px] text-slate-400">Cari Yarımil üzrə</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid: Schedule & Rapid Actions -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Today's Schedule -->
+                <div class="lg:col-span-2 glass-card rounded-3xl p-6 border space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                        <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white">Bugünkü Dərs Cədvəli (4-A Sinif)</h3>
+                        <span class="text-xs font-semibold text-brand-600 bg-brand-50 dark:bg-slate-800 px-3 py-1 rounded-full">Bazar ertəsi</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                            <div class="flex items-center gap-4">
+                                <span class="text-xs font-bold text-brand-600 bg-brand-100 dark:bg-brand-900/40 px-3 py-1.5 rounded-xl">09:00 - 09:45</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Riyaziyyat</h4>
+                                    <p class="text-xs text-slate-500">Mövzu: Kəsrlərin müqayisəsi və toplanması</p>
+                                </div>
+                            </div>
+                            <button onclick="switchTab('journal')" class="px-3 py-1.5 bg-brand-600 text-white rounded-xl text-xs font-semibold hover:bg-brand-700 transition">Jurnala Keç</button>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                            <div class="flex items-center gap-4">
+                                <span class="text-xs font-bold text-edu-purple bg-purple-100 dark:bg-purple-900/40 px-3 py-1.5 rounded-xl">10:00 - 10:45</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Azərbaycan Dili</h4>
+                                    <p class="text-xs text-slate-500">Mövzu: İsimlərin hallanması və mənsubiyyət şəkilçiləri</p>
+                                </div>
+                            </div>
+                            <button onclick="switchTab('e-lessons')" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold">Materialı Aç</button>
+                        </div>
+
+                        <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/60 dark:border-slate-700/60">
+                            <div class="flex items-center gap-4">
+                                <span class="text-xs font-bold text-edu-teal bg-teal-100 dark:bg-teal-900/40 px-3 py-1.5 rounded-xl">11:00 - 11:45</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Həyat Bilgisi</h4>
+                                    <p class="text-xs text-slate-500">Mövzu: Təbiət və ekologiyanın mühafizəsi</p>
+                                </div>
+                            </div>
+                            <button onclick="switchTab('assignments')" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold">Tapşırıq Ver</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Announcements / Quick Tools -->
+                <div class="glass-card rounded-3xl p-6 border space-y-4 flex flex-col justify-between">
+                    <div>
+                        <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white mb-4">Müəllim üçün Tez Köməkçilər</h3>
+                        <div class="space-y-3">
+                            <button onclick="switchTab('journal')" class="w-full p-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-600 rounded-2xl text-xs font-bold flex items-center justify-between transition group">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-brand-500 group-hover:text-white"></i> Günlük Qiymətləri Yaz</span>
+                                <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-white"></i>
+                            </button>
+                            <button onclick="switchTab('analytics')" class="w-full p-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-edu-purple hover:text-white dark:hover:bg-edu-purple rounded-2xl text-xs font-bold flex items-center justify-between transition group">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-chart-pie text-edu-purple group-hover:text-white"></i> Semestr Hesabatı Al</span>
+                                <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-white"></i>
+                            </button>
+                            <button onclick="openAssignModal()" class="w-full p-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-edu-green hover:text-white dark:hover:bg-edu-green rounded-2xl text-xs font-bold flex items-center justify-between transition group">
+                                <span class="flex items-center gap-2"><i class="fa-solid fa-file-circle-plus text-edu-green group-hover:text-white"></i> Yeni Onlayn Sınaq Yarat</span>
+                                <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-white"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-brand-500/10 border border-brand-500/30 rounded-2xl">
+                        <span class="text-xs font-bold text-brand-600 dark:text-brand-400 block mb-1">Xatırlatma</span>
+                        <p class="text-xs text-slate-600 dark:text-slate-300">Sabah saat 14:00-da Pedaqoji Şura iclası keçiriləcəkdir.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. ŞAGİRD KABİNETİ ================= -->
+        <section id="tab-student-portal" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Şagird Kabineti</h1>
+                    <p class="text-xs text-slate-500">Xoş gəldin, Ayxan! Təhsil nailiyyətlərin və tapşırıqların buradadır.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-amber-500/10 border border-amber-500/30 px-4 py-2 rounded-2xl">
+                        <i class="fa-solid fa-star text-amber-500 text-xl animate-pulse"></i>
+                        <div>
+                            <span class="block text-[10px] text-slate-400">Ümumi Ulduzlar</span>
+                            <span id="studentStarCount" class="fredoka text-lg font-bold text-amber-600 dark:text-amber-400">145 ★</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Summary Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="glass-card p-6 rounded-3xl border flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-edu-green/10 text-edu-green flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Ümumi Ortalaman</span>
+                        <h3 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">9.2</h3>
+                        <span class="text-[10px] text-emerald-500 font-semibold">Əlaçı Şagird</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl border flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-600 flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Aktiv Ev Tapşırıqları</span>
+                        <h3 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">2 Tapşırıq</h3>
+                        <span class="text-[10px] text-amber-500 font-semibold">Təslim vaxtına 1 gün qalır</span>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 rounded-3xl border flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-edu-purple/10 text-edu-purple flex items-center justify-center text-2xl font-bold">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400">Qazanılmış Nişanlar</span>
+                        <h3 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">5 Nişan</h3>
+                        <span class="text-[10px] text-edu-purple font-semibold">"Riyaziyyat Ustadı"</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Grades & Active Tasks -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Subject Grades -->
+                <div class="glass-card rounded-3xl p-6 border space-y-4">
+                    <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3">Fənlər Üzrə Son Qiymətlərim</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-600 font-bold flex items-center justify-center text-sm">Rİ</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Riyaziyyat</h4>
+                                    <span class="text-xs text-slate-400">Son qiymətlər: 10, 9, 10, 9</span>
+                                </div>
+                            </div>
+                            <span class="fredoka text-lg font-bold text-emerald-500">9.5</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-xl bg-edu-purple/10 text-edu-purple font-bold flex items-center justify-center text-sm">AZ</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Azərbaycan Dili</h4>
+                                    <span class="text-xs text-slate-400">Son qiymətlər: 9, 8, 9, 10</span>
+                                </div>
+                            </div>
+                            <span class="fredoka text-lg font-bold text-emerald-500">9.0</span>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3.5 bg-slate-50 dark:bg-slate-800/60 rounded-2xl">
+                            <div class="flex items-center gap-3">
+                                <span class="w-10 h-10 rounded-xl bg-edu-amber/10 text-edu-amber font-bold flex items-center justify-center text-sm">HB</span>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800 dark:text-white">Həyat Bilgisi</h4>
+                                    <span class="text-xs text-slate-400">Son qiymətlər: 10, 10, 9</span>
+                                </div>
+                            </div>
+                            <span class="fredoka text-lg font-bold text-emerald-500">9.6</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Student Assignments -->
+                <div class="glass-card rounded-3xl p-6 border space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                        <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white">İcrası Gözlənilən Tapşırıqlar</h3>
+                        <button onclick="switchTab('assignments')" class="text-xs text-brand-600 font-bold hover:underline">Hamısına bax &rarr;</button>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl flex items-center justify-between">
+                            <div>
+                                <span class="px-2 py-0.5 bg-amber-500 text-white rounded-md text-[10px] font-bold">Riyaziyyat</span>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mt-1">Səhifə 45, Tapşırıq 3 və 4</h4>
+                                <span class="text-xs text-slate-500">Son tarix: Sabah, 18:00</span>
+                            </div>
+                            <button onclick="switchTab('assignments')" class="px-3 py-1.5 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition">Həll Et</button>
+                        </div>
+
+                        <div class="p-4 bg-brand-500/10 border border-brand-500/20 rounded-2xl flex items-center justify-between">
+                            <div>
+                                <span class="px-2 py-0.5 bg-brand-600 text-white rounded-md text-[10px] font-bold">Azərbaycan Dili</span>
+                                <h4 class="text-sm font-bold text-slate-800 dark:text-white mt-1">Mətn üzrə suallara cavab yazmaq</h4>
+                                <span class="text-xs text-slate-500">Son tarix: 3 gün sonra</span>
+                            </div>
+                            <button onclick="switchTab('assignments')" class="px-3 py-1.5 bg-brand-600 text-white rounded-xl text-xs font-bold hover:bg-brand-700 transition">Həll Et</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 3. SİNİF JURNALI ================= -->
+        <section id="tab-journal" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">İnteraktiv Sinif Jurnalı</h1>
+                    <p class="text-xs text-slate-500">4-A Sinfi üzrə gündəlik davamiyyət və 1-10 arası qiymətləndirmə jurnalı.</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <select id="journalSubjectSelect" onchange="renderJournal()" class="bg-slate-100 dark:bg-slate-800 border-none text-xs font-bold px-4 py-2.5 rounded-xl outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="math">Fənn: Riyaziyyat</option>
+                        <option value="az">Fənn: Azərbaycan Dili</option>
+                        <option value="science">Fənn: Həyat Bilgisi</option>
+                    </select>
+                    <button onclick="saveJournalData()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Jurnalı Yadda Saxla
+                    </button>
+                </div>
+            </div>
+
+            <!-- Interactive Journal Table -->
+            <div class="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100/80 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 text-xs text-slate-500 uppercase">
+                                <th class="p-4 w-12 text-center">#</th>
+                                <th class="p-4 min-w-[180px]">Şagirdin Adı Soyadı</th>
+                                <th class="p-4 text-center min-w-[100px]">Davamiyyət</th>
+                                <th class="p-4 text-center min-w-[80px]">01 Noy</th>
+                                <th class="p-4 text-center min-w-[80px]">04 Noy</th>
+                                <th class="p-4 text-center min-w-[80px]">07 Noy</th>
+                                <th class="p-4 text-center min-w-[80px]">Bugün</th>
+                                <th class="p-4 text-center font-bold text-brand-600 min-w-[100px]">Orta Bal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="journalTableBody" class="divide-y divide-slate-200 dark:divide-slate-800">
+                            <!-- Injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 4. ELEKTRON DƏRSLƏR ================= -->
+        <section id="tab-e-lessons" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Elektron Dərslər & İnteraktiv İzahlar</h1>
+                    <p class="text-xs text-slate-500">Mövzular üzrə hazırlanmış vizual dərsliklər, slaydlar və video materiallar.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="filterLessons('all', this)" class="lesson-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white">Hamısı</button>
+                    <button onclick="filterLessons('math', this)" class="lesson-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Riyaziyyat</button>
+                    <button onclick="filterLessons('az', this)" class="lesson-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Azərbaycan Dili</button>
+                </div>
+            </div>
+
+            <!-- Lessons Grid -->
+            <div id="lessonsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Injected dynamically -->
+            </div>
+
+            <!-- Interactive Lesson Viewer Modal (Hidden) -->
+            <div id="lessonViewerModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+                <div class="glass-card max-w-3xl w-full rounded-3xl border p-6 space-y-6 max-h-[90vh] overflow-y-auto">
+                    <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                        <div>
+                            <span id="modalLessonSubject" class="text-xs font-bold text-brand-600 uppercase">Riyaziyyat</span>
+                            <h3 id="modalLessonTitle" class="fredoka text-2xl font-bold text-slate-800 dark:text-white">Dərs Mövzusu</h3>
+                        </div>
+                        <button onclick="closeLessonModal()" class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-500 hover:text-rose-500 transition">
+                            <i class="fa-solid fa-xmark text-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Slide Viewer Content -->
+                    <div id="modalLessonContent" class="p-6 bg-slate-100 dark:bg-slate-800 rounded-2xl min-h-[240px] flex flex-col justify-between">
+                        <!-- Injected JS Content -->
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <button id="prevSlideBtn" onclick="changeSlide(-1)" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 font-bold rounded-xl text-xs">
+                            <i class="fa-solid fa-arrow-left mr-1"></i> Əvvəlki Slayd
+                        </button>
+                        <span id="slideIndicator" class="text-xs font-bold text-slate-400">Slayd 1 / 3</span>
+                        <button id="nextSlideBtn" onclick="changeSlide(1)" class="px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-xs shadow">
+                            Növbəti Slayd <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 5. TAPŞIRIQLAR ================= -->
+        <section id="tab-assignments" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Məktəb Tapşırıqları</h1>
+                    <p class="text-xs text-slate-500">Müəllim tərəfindən verilmiş ev tapşırıqları və onların statusları.</p>
+                </div>
+                <button onclick="openAssignModal()" class="px-4 py-2.5 bg-brand-600 text-white font-bold rounded-xl text-xs shadow flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Tapşırıq Yarat
+                </button>
+            </div>
+
+            <!-- Task List Table -->
+            <div class="glass-card rounded-3xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                    <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white">Cari Tapşırıq Siyahısı</h3>
+                    <span class="text-xs text-slate-400">Cəmi: <span id="totalAssignmentsCount">3</span> Tapşırıq</span>
+                </div>
+
+                <div id="assignmentList" class="space-y-4">
+                    <!-- Injected by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 6. TESTLƏR ================= -->
+        <section id="tab-tests" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Onlayn İmtahanlar & Sınaqlar</h1>
+                    <p class="text-xs text-slate-500">Biliklərinizi avtomatik qiymətləndirən interaktiv vaxtlı testlər.</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="initQuiz('az')" id="quiz-cat-az" class="px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow">Azərbaycan Dili</button>
+                    <button onclick="initQuiz('math')" id="quiz-cat-math" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Riyaziyyat</button>
+                </div>
+            </div>
+
+            <!-- Quiz Card Container -->
+            <div class="glass-card rounded-3xl p-6 sm:p-10 border border-slate-200 dark:border-slate-800 shadow-xl">
+                <!-- Active Quiz -->
+                <div id="quizContainer" class="space-y-6">
+                    <div class="flex items-center justify-between bg-slate-100 dark:bg-slate-800 p-4 rounded-2xl">
+                        <span id="quizProgress" class="text-xs font-bold text-slate-600 dark:text-slate-300">Sual: 1 / 4</span>
+                        <div class="flex items-center gap-2 text-rose-500 font-bold text-sm">
+                            <i class="fa-regular fa-clock"></i>
+                            <span id="quizTimer">03:00</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 id="quizQuestion" class="fredoka text-xl sm:text-2xl font-bold text-slate-800 dark:text-white">Sual Yüklənir...</h3>
+                        <div id="quizOptions" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            <!-- Injected JS -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-4 border-t border-slate-200 dark:border-slate-800">
+                        <button id="nextQuestionBtn" onclick="nextQuestion()" class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow hover:bg-brand-700 transition disabled:opacity-50" disabled>
+                            Növbəti Sual <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quiz Summary -->
+                <div id="quizSummary" class="hidden text-center py-8 space-y-6">
+                    <div class="w-20 h-20 bg-amber-500/10 text-amber-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4">
+                        <i class="fa-solid fa-award"></i>
+                    </div>
+                    <h3 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Test Tamamlandı!</h3>
+                    <p class="text-xs text-slate-500">Nəticəniz aşağıda göstərilmişdir:</p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-lg mx-auto py-4">
+                        <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl">
+                            <span class="block text-xs text-slate-400">Düzgün Cavablar</span>
+                            <span id="summaryCorrect" class="fredoka text-2xl font-bold text-emerald-500">0</span>
+                        </div>
+                        <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl">
+                            <span class="block text-xs text-slate-400">Nəticə Faizi</span>
+                            <span id="summaryPercent" class="fredoka text-2xl font-bold text-brand-600">0%</span>
+                        </div>
+                        <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl col-span-2 sm:col-span-1">
+                            <span class="block text-xs text-slate-400">Qazanılan Ulduz</span>
+                            <span id="summaryStars" class="fredoka text-2xl font-bold text-amber-500">+0 ★</span>
+                        </div>
+                    </div>
+
+                    <button onclick="initQuiz('az')" class="px-8 py-3 bg-brand-600 text-white font-bold rounded-2xl shadow hover:bg-brand-700 transition">
+                        Yenidən Sına
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 7. NƏTİCƏLƏRİN QİYMƏTLƏNDİRİLMƏSİ ================= -->
+        <section id="tab-analytics" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h1 class="fredoka text-3xl font-bold text-slate-800 dark:text-white">Nəticələrin Qiymətləndirilməsi & Analitika</h1>
+                    <p class="text-xs text-slate-500">Sinif və şagirdlər üzrə akademik göstəricilərin vizual təhlili.</p>
+                </div>
+                <button onclick="generateReport()" class="px-4 py-2.5 bg-edu-purple hover:bg-purple-700 text-white font-bold rounded-xl text-xs shadow flex items-center gap-2">
+                    <i class="fa-solid fa-file-export"></i> Hesabatı Çap Et / Yüklə
+                </button>
+            </div>
+
+            <!-- Analytics Visual Bar Charts -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Subject Performance Progress -->
+                <div class="glass-card rounded-3xl p-6 border space-y-6">
+                    <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3">Fənlər Üzrə Mənimsəmə Faizi</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 dark:text-slate-300">Riyaziyyat</span>
+                                <span class="text-brand-600">88%</span>
+                            </div>
+                            <div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-brand-600 rounded-full" style="width: 88%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 dark:text-slate-300">Azərbaycan Dili</span>
+                                <span class="text-edu-purple">92%</span>
+                            </div>
+                            <div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-edu-purple rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 dark:text-slate-300">Həyat Bilgisi</span>
+                                <span class="text-edu-teal">95%</span>
+                            </div>
+                            <div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-edu-teal rounded-full" style="width: 95%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-bold mb-1">
+                                <span class="text-slate-700 dark:text-slate-300">İngilis Dili</span>
+                                <span class="text-edu-amber">78%</span>
+                            </div>
+                            <div class="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <div class="h-full bg-edu-amber rounded-full" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grade Distribution -->
+                <div class="glass-card rounded-3xl p-6 border space-y-6">
+                    <h3 class="fredoka text-lg font-bold text-slate-800 dark:text-white border-b border-slate-200 dark:border-slate-800 pb-3">Qiymət Paylanması (4-A Sinfi)</h3>
+                    
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div class="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl">
+                            <span class="fredoka text-3xl font-bold text-emerald-500">65%</span>
+                            <span class="block text-xs font-bold text-slate-600 dark:text-slate-300 mt-1">Əla (9-10 Bal)</span>
+                            <span class="text-[10px] text-slate-400">15 Şagird</span>
+                        </div>
+
+                        <div class="p-4 bg-amber-500/10 border border-amber-500/30 rounded-2xl">
+                            <span class="fredoka text-3xl font-bold text-amber-500">25%</span>
+                            <span class="block text-xs font-bold text-slate-600 dark:text-slate-300 mt-1">Yaxşı (7-8 Bal)</span>
+                            <span class="text-[10px] text-slate-400">6 Şagird</span>
+                        </div>
+
+                        <div class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-2xl">
+                            <span class="fredoka text-3xl font-bold text-rose-500">10%</span>
+                            <span class="block text-xs font-bold text-slate-600 dark:text-slate-300 mt-1">Kafi (5-6 Bal)</span>
+                            <span class="text-[10px] text-slate-400">3 Şagird</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl text-xs space-y-2">
+                        <span class="font-bold text-slate-700 dark:text-slate-200">Pedaqoji İcmal:</span>
+                        <p class="text-slate-500 leading-relaxed">Sinfin ümumi akademik göstəricisi yüksəkdir. İngilis dili fənni üzrə əlavə dəstək tapşırıqlarının verilməsi tövsiyə olunur.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal: Assign Homework (Müəllim üçün) -->
+    <div id="assignModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full rounded-3xl p-6 space-y-4 border">
+            <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+                <h3 class="fredoka text-xl font-bold text-slate-800 dark:text-white">Yeni Tapşırıq Təyin Et</h3>
+                <button onclick="closeAssignModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <form onsubmit="handleCreateAssignment(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Fənn Seçin</label>
+                    <select id="newAssignSubject" class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-xs font-semibold p-3 outline-none">
+                        <option value="Riyaziyyat">Riyaziyyat</option>
+                        <option value="Azərbaycan Dili">Azərbaycan Dili</option>
+                        <option value="Həyat Bilgisi">Həyat Bilgisi</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Tapşırığın Başlığı</label>
+                    <input type="text" id="newAssignTitle" required placeholder="Məsələn: Səhifə 52, Tapşırıq 1-5" class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-xs p-3 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">Son Təslim Tarixi</label>
+                    <input type="date" id="newAssignDate" required class="w-full bg-slate-100 dark:bg-slate-800 border-none rounded-xl text-xs p-3 outline-none">
+                </div>
+
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAssignModal()" class="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold rounded-xl text-xs">Ləğv Et</button>
+                    <button type="submit" class="px-4 py-2 bg-brand-600 text-white font-bold rounded-xl text-xs shadow">Təyin Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast Modal -->
+    <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 glass-card border border-emerald-500/40 p-4 rounded-2xl shadow-xl flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center text-lg">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <div>
+            <h5 id="toastTitle" class="fredoka text-sm font-bold text-slate-800 dark:text-white">Uğurlu!</h5>
+            <p id="toastMessage" class="text-xs text-slate-500">Əməliyyat icra olundu.</p>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // ================= GLOBAL STATE =================
+        let activeRole = 'teacher'; // 'teacher' or 'student'
+        
+        // Initial Journal Data (4-A Class)
+        let journalStudents = [
+            { id: 1, name: "Ayxan Məmmədov", status: "i/ə", g1: 10, g2: 9, g3: 10, gToday: 10 },
+            { id: 2, name: "Aysel Qasımova", status: "i/ə", g1: 9, g2: 8, g3: 9, gToday: 9 },
+            { id: 3, name: "Elvin Həsənov", status: "q", g1: 7, g2: 8, g3: 7, gToday: "" },
+            { id: 4, name: "Nigar Əliyeva", status: "i/ə", g1: 10, g2: 10, g3: 9, gToday: 10 },
+            { id: 5, name: "Murad Səfərov", status: "i/ə", g1: 8, g2: 9, g3: 8, gToday: 8 }
+        ];
+
+        // E-Lessons Data
+        const lessonsData = [
+            {
+                id: 1,
+                subject: 'math',
+                subjectName: 'Riyaziyyat',
+                title: 'Kəsrlərin Müqayisəsi və Toplanması',
+                desc: 'Məxrəcləri eyni olan kəsrlərin müqayisə edilməsi qaydaları.',
+                slides: [
+                    'Slayd 1: Məxrəci eyni olan kəsrlərdən surəti böyük olan kəsr daha böyükdür.',
+                    'Slayd 2: Nümunə: 3/8 < 5/8. Çünki 5 hissə 3 hissədən çoxdur.',
+                    'Slayd 3: Tapşırıq: 4/10 və 7/10 kəsrlərini müqayisə edin.'
+                ]
+            },
+            {
+                id: 2,
+                subject: 'az',
+                subjectName: 'Azərbaycan Dili',
+                title: 'İsimlərin Hallanması və Şəkilçilər',
+                desc: 'Azərbaycan dilində ismin 6 halı və onların xüsusi şəkilçiləri.',
+                slides: [
+                    'Slayd 1: İsmin 6 halı var: Adlıq, Yiyəlik, Yönlük, Təsirlik, Yerlik, Çıxışlıq.',
+                    'Slayd 2: Yiyəlik halın şəkilçisi: -ın, -in, -un, -ün.',
+                    'Slayd 3: Nümunə: Məktəbin həyəti, kitabın səhifəsi.'
+                ]
+            },
+            {
+                id: 3,
+                subject: 'math',
+                subjectName: 'Riyaziyyat',
+                title: 'Həndəsi Fiqurların Perimetri',
+                desc: 'Kvadrat və düzbucaqlının perimetrinin hesablanması düsturları.',
+                slides: [
+                    'Slayd 1: Kvadratın perimetri: P = 4 * a',
+                    'Slayd 2: Düzbucaqlının perimetri: P = 2 * (a + b)',
+                    'Slayd 3: Nümunə: Tərəfləri 5 sm və 3 sm olan düzbucaqlının perimetrini tapın.'
+                ]
+            }
+        ];
+
+        // Assignments Data
+        let assignmentsList = [
+            { id: 1, subject: 'Riyaziyyat', title: 'Səhifə 45, Tapşırıq 3 və 4', date: '2026-11-09', status: 'Gözləyir' },
+            { id: 2, subject: 'Azərbaycan Dili', title: 'Mətn üzrə suallara cavab yazmaq', date: '2026-11-11', status: 'Gözləyir' },
+            { id: 3, subject: 'Həyat Bilgisi', title: 'Təbiəti qoruyaq mövzusunda kiçik inşa', date: '2026-11-05', status: 'Tamamlandı' }
+        ];
+
+        // Active Lesson Modal State
+        let currentLessonSlides = [];
+        let currentSlideIdx = 0;
+
+        // ================= NAVIGATION SYSTEM =================
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`tab-${tabId}`);
+            if(target) target.classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('nav-active'));
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) activeBtn.classList.add('nav-active');
+
+            if(tabId === 'journal') renderJournal();
+            if(tabId === 'e-lessons') renderLessons(lessonsData);
+            if(tabId === 'assignments') renderAssignments();
+            if(tabId === 'tests' && quizState.questions.length === 0) initQuiz('az');
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        // Set Role (Teacher vs Student View UI)
+        function setRole(role) {
+            activeRole = role;
+            const btnT = document.getElementById('role-btn-teacher');
+            const btnS = document.getElementById('role-btn-student');
+
+            if(role === 'teacher') {
+                btnT.className = "px-3 py-1.5 rounded-lg transition-all bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm font-bold";
+                btnS.className = "px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 font-semibold";
+                document.getElementById('activeUserName').innerText = "Leyla Əliyeva";
+                document.getElementById('activeUserRole').innerText = "Riyaziyyat Müəllimi (4-A)";
+                document.getElementById('userAvatar').innerText = "LƏ";
+                switchTab('teacher-portal');
+            } else {
+                btnS.className = "px-3 py-1.5 rounded-lg transition-all bg-white dark:bg-slate-700 text-brand-600 dark:text-white shadow-sm font-bold";
+                btnT.className = "px-3 py-1.5 rounded-lg transition-all text-slate-600 dark:text-slate-400 font-semibold";
+                document.getElementById('activeUserName').innerText = "Ayxan Məmmədov";
+                document.getElementById('activeUserRole').innerText = "Şagird (4-A Sinif)";
+                document.getElementById('userAvatar').innerText = "AM";
+                switchTab('student-portal');
+            }
+        }
+
+        // Toast Messages
+        function showToast(title, message) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMessage').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // ================= 1. JOURNAL ENGINE =================
+        function renderJournal() {
+            const tbody = document.getElementById('journalTableBody');
+            tbody.innerHTML = journalStudents.map((st, idx) => {
+                const grades = [st.g1, st.g2, st.g3, parseInt(st.gToday)].filter(g => !isNaN(g) && g > 0);
+                const avg = grades.length ? (grades.reduce((a,b)=>a+b,0)/grades.length).toFixed(1) : '-';
+
+                return `
+                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                        <td class="p-4 text-center font-bold text-slate-400">${idx + 1}</td>
+                        <td class="p-4 font-bold text-slate-800 dark:text-slate-200">${st.name}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="toggleAttendance(${st.id})" class="px-2.5 py-1 rounded-lg text-xs font-bold ${st.status === 'i/ə' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-500/30' : 'bg-rose-500/10 text-rose-600 border border-rose-500/30'}">
+                                ${st.status === 'i/ə' ? 'İştirak Edir' : 'Qayıb (Q)'}
+                            </button>
+                        </td>
+                        <td class="p-4 text-center font-semibold text-slate-600 dark:text-slate-400">${st.g1}</td>
+                        <td class="p-4 text-center font-semibold text-slate-600 dark:text-slate-400">${st.g2}</td>
+                        <td class="p-4 text-center font-semibold text-slate-600 dark:text-slate-400">${st.g3}</td>
+                        <td class="p-4 text-center">
+                            <input type="number" min="1" max="10" value="${st.gToday}" onchange="updateGrade(${st.id}, this.value)" class="w-14 text-center bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-lg py-1 font-bold text-slate-800 dark:text-white outline-none focus:ring-2 focus:ring-brand-500">
+                        </td>
+                        <td class="p-4 text-center font-bold text-brand-600 text-base">${avg}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function toggleAttendance(id) {
+            const student = journalStudents.find(s => s.id === id);
+            if(student) {
+                student.status = student.status === 'i/ə' ? 'q' : 'i/ə';
+                renderJournal();
+            }
+        }
+
+        function updateGrade(id, val) {
+            const student = journalStudents.find(s => s.id === id);
+            if(student) {
+                student.gToday = val;
+                renderJournal();
+            }
+        }
+
+        function saveJournalData() {
+            showToast('Yadda Saxlanıldı', 'Sinif jurnalı məlumatları uğurla yeniləndi.');
+        }
+
+        // ================= 2. E-LESSONS ENGINE =================
+        function renderLessons(list) {
+            const grid = document.getElementById('lessonsGrid');
+            grid.innerHTML = list.map(item => `
+                <div class="glass-card rounded-3xl p-6 border border-slate-200 dark:border-slate-800 hover:shadow-xl transition flex flex-col justify-between">
+                    <div>
+                        <span class="px-3 py-1 bg-brand-500/10 text-brand-600 rounded-full text-xs font-bold uppercase mb-3 inline-block">${item.subjectName}</span>
+                        <h4 class="fredoka text-xl font-bold text-slate-800 dark:text-white mb-2">${item.title}</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed mb-6">${item.desc}</p>
+                    </div>
+                    <button onclick="openLessonModal(${item.id})" class="w-full py-2.5 bg-brand-600 text-white hover:bg-brand-700 transition rounded-xl text-xs font-bold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Dərsi İzlə / Başla
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function filterLessons(cat, btn) {
+            document.querySelectorAll('.lesson-filter-btn').forEach(b => b.className = "lesson-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300");
+            btn.className = "lesson-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white";
+
+            if(cat === 'all') renderLessons(lessonsData);
+            else renderLessons(lessonsData.filter(l => l.subject === cat));
+        }
+
+        function openLessonModal(id) {
+            const lesson = lessonsData.find(l => l.id === id);
+            if(!lesson) return;
+
+            currentLessonSlides = lesson.slides;
+            currentSlideIdx = 0;
+
+            document.getElementById('modalLessonSubject').innerText = lesson.subjectName;
+            document.getElementById('modalLessonTitle').innerText = lesson.title;
+            
+            updateSlideView();
+            document.getElementById('lessonViewerModal').classList.remove('hidden');
+        }
+
+        function updateSlideView() {
+            document.getElementById('modalLessonContent').innerHTML = `
+                <div class="space-y-4">
+                    <span class="text-xs font-bold text-brand-600">Slayd İzahı #${currentSlideIdx + 1}</span>
+                    <h4 class="fredoka text-lg font-bold text-slate-800 dark:text-white leading-snug">${currentLessonSlides[currentSlideIdx]}</h4>
+                </div>
+                <div class="pt-4 text-xs text-slate-400">Şagirdlərin diqqətinə: Slaydı oxuduqdan sonra növbəti düyməsini sıxın.</div>
+            `;
+            document.getElementById('slideIndicator').innerText = `Slayd ${currentSlideIdx + 1} / ${currentLessonSlides.length}`;
+            document.getElementById('prevSlideBtn').disabled = currentSlideIdx === 0;
+            document.getElementById('nextSlideBtn').disabled = currentSlideIdx === currentLessonSlides.length - 1;
+        }
+
+        function changeSlide(dir) {
+            currentSlideIdx += dir;
+            updateSlideView();
+        }
+
+        function closeLessonModal() {
+            document.getElementById('lessonViewerModal').classList.add('hidden');
+        }
+
+        // ================= 3. ASSIGNMENTS ENGINE =================
+        function renderAssignments() {
+            const list = document.getElementById('assignmentList');
+            document.getElementById('totalAssignmentsCount').innerText = assignmentsList.length;
+
+            list.innerHTML = assignmentsList.map(item => `
+                <div class="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="px-2.5 py-0.5 bg-brand-500/10 text-brand-600 rounded-md text-[10px] font-bold">${item.subject}</span>
+                            <span class="text-xs text-slate-400">Son tarix: ${item.date}</span>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-800 dark:text-white">${item.title}</h4>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-bold ${item.status === 'Tamamlandı' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}">
+                            ${item.status}
+                        </span>
+                        <button onclick="toggleAssignmentStatus(${item.id})" class="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-brand-600 hover:text-white transition rounded-xl text-xs font-bold">
+                            ${item.status === 'Tamamlandı' ? 'Yenidən Aç' : 'Təslim Et'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleAssignmentStatus(id) {
+            const item = assignmentsList.find(a => a.id === id);
+            if(item) {
+                item.status = item.status === 'Tamamlandı' ? 'Gözləyir' : 'Tamamlandı';
+                renderAssignments();
+                showToast('Status Yeniləndi', 'Tapşırıq statusu dəyişdirildi.');
+            }
+        }
+
+        function openAssignModal() {
+            document.getElementById('assignModal').classList.remove('hidden');
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assignModal').classList.add('hidden');
+        }
+
+        function handleCreateAssignment(e) {
+            e.preventDefault();
+            const subject = document.getElementById('newAssignSubject').value;
+            const title = document.getElementById('newAssignTitle').value;
+            const date = document.getElementById('newAssignDate').value;
+
+            assignmentsList.unshift({
+                id: Date.now(),
+                subject,
+                title,
+                date,
+                status: 'Gözləyir'
+            });
+
+            closeAssignModal();
+            renderAssignments();
+            showToast('Tapşırıq Təyin Edildi', 'Yeni tapşırıq sinif siyahısına əlavə olundu.');
+        }
+
+        // ================= 4. QUIZ ENGINE =================
+        const quizData = {
+            az: [
+                { q: '"Kitab" sözündə neçə sait səs var?', options: ['1', '2', '3', '4'], correct: 1 },
+                { q: 'Hangi söz ad bildirir (İsimdir)?', options: ['Qaçmaq', 'Qırmızı', 'Məktəb', 'Gözəl'], correct: 2 },
+                { q: 'Cümlənin sonunda hansı durğu işarəsi qoyulur: "Sabah məktəbə gedəcəksən"', options: ['?', '!', '.', ','], correct: 0 },
+                { q: 'Əks mənalı sözlər cütlüyünü tapın:', options: ['Böyük - Uca', 'Gece - Gündüz', 'Şirin - Lezzətli', 'Ağ - Şəffaf'], correct: 1 }
+            ],
+            math: [
+                { q: '15 + 27 cəmi neçəyə bərabərdir?', options: ['32', '42', '40', '52'], correct: 1 },
+                { q: 'Kvadratın neçə bərabər tərəfi var?', options: ['3', '4', '5', '6'], correct: 1 },
+                { q: 'Əgər 3 almanı 2 uşaq arasında bölsək və 1-i qalsa, neçə alma paylanıb?', options: ['1', '2', '3', '0'], correct: 1 },
+                { q: '50 - 18 fərqini hesablayın:', options: ['32', '38', '22', '30'], correct: 0 }
+            ]
+        };
+
+        let quizState = {
+            category: 'az',
+            currentIndex: 0,
+            questions: [],
+            selectedOption: null,
+            score: 0,
+            timer: null,
+            timeLeft: 180
+        };
+
+        function initQuiz(cat) {
+            quizState.category = cat;
+            quizState.questions = quizData[cat];
+            quizState.currentIndex = 0;
+            quizState.score = 0;
+            quizState.selectedOption = null;
+            quizState.timeLeft = 180;
+
+            document.getElementById('quiz-cat-az').className = cat === 'az' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow' : 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+            document.getElementById('quiz-cat-math').className = cat === 'math' ? 'px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow' : 'px-4 py-2 rounded-xl text-xs font-bold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
+
+            document.getElementById('quizContainer').classList.remove('hidden');
+            document.getElementById('quizSummary').classList.add('hidden');
+
+            startTimer();
+            renderQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(quizState.timer);
+            quizState.timer = setInterval(() => {
+                quizState.timeLeft--;
+                const min = Math.floor(quizState.timeLeft / 60).toString().padStart(2, '0');
+                const sec = (quizState.timeLeft % 60).toString().padStart(2, '0');
+                document.getElementById('quizTimer').innerText = `${min}:${sec}`;
+
+                if(quizState.timeLeft <= 0) {
+                    clearInterval(quizState.timer);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            const q = quizState.questions[quizState.currentIndex];
+            document.getElementById('quizProgress').innerText = `Sual: ${quizState.currentIndex + 1} / ${quizState.questions.length}`;
+            document.getElementById('quizQuestion').innerText = q.q;
+
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = q.options.map((opt, idx) => `
+                <button onclick="selectOption(${idx})" class="quiz-opt-btn text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-700 font-medium text-sm hover:border-brand-500 transition flex items-center justify-between">
+                    <span>${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-300"></i>
+                </button>
+            `).join('');
+
+            document.getElementById('nextQuestionBtn').disabled = true;
+            quizState.selectedOption = null;
+        }
+
+        function selectOption(idx) {
+            quizState.selectedOption = idx;
+            const btns = document.querySelectorAll('.quiz-opt-btn');
+            btns.forEach((b, i) => {
+                if(i === idx) {
+                    b.className = "quiz-opt-btn text-left p-4 rounded-2xl border-2 border-brand-600 bg-brand-500/10 font-bold text-sm text-brand-600 flex items-center justify-between shadow-sm";
+                } else {
+                    b.className = "quiz-opt-btn text-left p-4 rounded-2xl border border-slate-200 dark:border-slate-700 font-medium text-sm opacity-60 flex items-center justify-between";
+                }
+            });
+            document.getElementById('nextQuestionBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            const q = quizState.questions[quizState.currentIndex];
+            if(quizState.selectedOption === q.correct) {
+                quizState.score++;
+            }
+
+            quizState.currentIndex++;
+            if(quizState.currentIndex < quizState.questions.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            clearInterval(quizState.timer);
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.getElementById('quizSummary').classList.remove('hidden');
+
+            const total = quizState.questions.length;
+            const percent = Math.round((quizState.score / total) * 100);
+            const starsEarned = quizState.score * 10;
+
+            document.getElementById('summaryCorrect').innerText = `${quizState.score} / ${total}`;
+            document.getElementById('summaryPercent').innerText = `${percent}%`;
+            document.getElementById('summaryStars').innerText = `+${starsEarned} ★`;
+
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 50, spread: 70, origin: { y: 0.7 } });
+            }
+        }
+
+        // Generate Report Trigger
+        function generateReport() {
+            showToast('Hesabat Hazırlanır', '4-A Sinfinin Semestr Nəticələri PDF formatında generasiya olunur.');
+        }
+
+        // App Initialization
+        window.onload = function() {
+            switchTab('teacher-portal');
+        };
+    </script>
+</body>
+</html>
