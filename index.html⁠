@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedaqoji Təhsil Portalı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Header / Naviqasiya -->
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showTab('dashboard')">
+                <div class="bg-white text-indigo-600 p-2 rounded-xl font-bold text-xl shadow">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Pedaqoji Portalı</h1>
+                    <p class="text-xs text-indigo-200">İbtidai Sinif & İdarəetmə</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex space-x-1">
+                <button onclick="showTab('dashboard')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium bg-indigo-700 transition"><i class="fa-solid fa-house mr-1"></i> Ana Səhifə</button>
+                <button onclick="showTab('journal')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"><i class="fa-solid fa-book-open mr-1"></i> Sinif Jurnalı</button>
+                <button onclick="showTab('teacher')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"><i class="fa-solid fa-chalkboard-user mr-1"></i> Müəllim Kabineti</button>
+                <button onclick="showTab('student')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"><i class="fa-solid fa-user-graduate mr-1"></i> Şagird Kabineti</button>
+                <button onclick="showTab('lessons')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"><i class="fa-solid fa-laptop-code mr-1"></i> Elektron Dərslər</button>
+                <button onclick="showTab('tasks')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"><i class="fa-solid fa-list-check mr-1"></i> Tapşırıqlar</button>
+                <button onclick="showTab('tests')" class="nav-btn px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"><i class="fa-solid fa-pen-to-square mr-1"></i> Testlər</button>
+            </nav>
+            <div class="flex items-center space-x-2">
+                <span class="bg-indigo-500 px-3 py-1 rounded-full text-xs font-semibold">Dilbazi H.</span>
+            </div>
+        </div>
+        <!-- Mobil Naviqasiya -->
+        <div class="md:hidden flex overflow-x-auto px-2 py-2 bg-indigo-700 space-x-2 scrollbar-none">
+            <button onclick="showTab('dashboard')" class="px-3 py-1 rounded bg-indigo-800 text-xs whitespace-nowrap">Ana Səhifə</button>
+            <button onclick="showTab('journal')" class="px-3 py-1 rounded bg-indigo-600 text-xs whitespace-nowrap">Jurnal</button>
+            <button onclick="showTab('teacher')" class="px-3 py-1 rounded bg-indigo-600 text-xs whitespace-nowrap">Müəllim</button>
+            <button onclick="showTab('student')" class="px-3 py-1 rounded bg-indigo-600 text-xs whitespace-nowrap">Şagird</button>
+            <button onclick="showTab('lessons')" class="px-3 py-1 rounded bg-indigo-600 text-xs whitespace-nowrap">Dərslər</button>
+            <button onclick="showTab('tasks')" class="px-3 py-1 rounded bg-indigo-600 text-xs whitespace-nowrap">Tapşırıqlar</button>
+            <button onclick="showTab('tests')" class="px-3 py-1 rounded bg-indigo-600 text-xs whitespace-nowrap">Testlər</button>
+        </div>
+    </header>
+
+    <!-- Əsas Məzmun Sahəsi -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+
+        <!-- 1. ANA SƏHİFƏ -->
+        <section id="dashboard" class="tab-content space-y-6">
+            <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-center">
+                <div class="space-y-2 mb-4 md:mb-0">
+                    <h2 class="text-2xl font-bold">Xoş gəlmisiniz, Pedaqoji Portala!</h2>
+                    <p class="text-indigo-100 text-sm max-w-xl">İbtidai sinif təhsili, interaktiv dərslər, testlər və qiymətləndirmə üçün vahid rəqəmsal mühit.</p>
+                </div>
+                <div class="flex space-x-3">
+                    <button onclick="showTab('tests')" class="bg-white text-indigo-600 px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-indigo-50 transition">Testə Başla</button>
+                    <button onclick="showTab('journal')" class="bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-indigo-800 transition">Jurnala Bax</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="bg-blue-100 text-blue-600 p-3 rounded-xl text-xl"><i class="fa-solid fa-users"></i></div>
+                    <div><p class="text-xs text-slate-500">Aktiv Şagirdlər</p><h3 class="text-xl font-bold">24 nəfər</h3></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="bg-emerald-100 text-emerald-600 p-3 rounded-xl text-xl"><i class="fa-solid fa-book"></i></div>
+                    <div><p class="text-xs text-slate-500">Elektron Dərs</p><h3 class="text-xl font-bold">12 mövzu</h3></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="bg-amber-100 text-amber-600 p-3 rounded-xl text-xl"><i class="fa-solid fa-star"></i></div>
+                    <div><p class="text-xs text-slate-500">Orta Uğur</p><h3 class="text-xl font-bold">92%</h3></div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center space-x-4">
+                    <div class="bg-purple-100 text-purple-600 p-3 rounded-xl text-xl"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <div><p class="text-xs text-slate-500">Tamamlanan Test</p><h3 class="text-xl font-bold">145</h3></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. SİNİF JURNALI -->
+        <section id="journal" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-book-open text-indigo-600 mr-2"></i> Sinif Jurnalı (III "A" Sinfi)</h3>
+                    <button onclick="alert('Dəyişikliklər yadda saxlanıldı!')" class="bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow hover:bg-indigo-700 transition">Yadda Saxla</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-600 text-xs uppercase tracking-wider">
+                                <th class="p-3 rounded-l-xl">Şagirdin Adı</th>
+                                <th class="p-3">Davamiyyət</th>
+                                <th class="p-3">Ana Dili (1-10)</th>
+                                <th class="p-3">Riyaziyyat (1-10)</th>
+                                <th class="p-3 rounded-r-xl">Orta Bal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-3 font-medium">Əliyev Murad</td>
+                                <td class="p-3"><select class="bg-slate-50 border rounded p-1 text-xs"><option>İştirak edir</option><option>Qayıb</option></select></td>
+                                <td class="p-3"><input type="number" min="1" max="10" value="9" class="w-16 border rounded p-1 text-center"></td>
+                                <td class="p-3"><input type="number" min="1" max="10" value="8" class="w-16 border rounded p-1 text-center"></td>
+                                <td class="p-3 font-bold text-indigo-600">8.5</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">Məmmədova Aysel</td>
+                                <td class="p-3"><select class="bg-slate-50 border rounded p-1 text-xs"><option>İştirak edir</option><option>Qayıb</option></select></td>
+                                <td class="p-3"><input type="number" min="1" max="10" value="10" class="w-16 border rounded p-1 text-center"></td>
+                                <td class="p-3"><input type="number" min="1" max="10" value="9" class="w-16 border rounded p-1 text-center"></td>
+                                <td class="p-3 font-bold text-indigo-600">9.5</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">Həsənov Rəşad</td>
+                                <td class="p-3"><select class="bg-slate-50 border rounded p-1 text-xs"><option>İştirak edir</option><option>Qayıb</option></select></td>
+                                <td class="p-3"><input type="number" min="1" max="10" value="7" class="w-16 border rounded p-1 text-center"></td>
+                                <td class="p-3"><input type="number" min="1" max="10" value="8" class="w-16 border rounded p-1 text-center"></td>
+                                <td class="p-3 font-bold text-indigo-600">7.5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. MÜƏLLİM KABİNETİ -->
+        <section id="teacher" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-chalkboard-user text-indigo-600 mr-2"></i> Yeni Tapşırıq Təyin Et</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Mövzu Adı</label>
+                            <input type="text" id="taskTitle" placeholder="Məs: 3-cü sinif riyaziyyat vurma cədvəli" class="w-full border rounded-xl p-2.5 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-500 mb-1">Təsvir və Təlimat</label>
+                            <textarea id="taskDesc" placeholder="Tapşırığın şərtini daxil edin..." class="w-full border rounded-xl p-2.5 text-sm h-24"></textarea>
+                        </div>
+                        <button onclick="addNewTask()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl font-semibold text-sm hover:bg-indigo-700 transition">Tapşırığı Göndər</button>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                    <h3 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-chart-pie text-indigo-600 mr-2"></i> Metodik Resurslar</h3>
+                    <div class="space-y-2">
+                        <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                            <div><p class="font-medium text-sm">İbtidai sinif oxu metodikası.pdf</p><span class="text-xs text-slate-400">1.4 MB</span></div>
+                            <button class="text-indigo-600 font-semibold text-xs bg-indigo-50 px-3 py-1.5 rounded-lg">Yüklə</button>
+                        </div>
+                        <div class="p-3 bg-slate-50 rounded-xl flex justify-between items-center">
+                            <div><p class="font-medium text-sm">Açıq dərs planı nümunəsi.docx</p><span class="text-xs text-slate-400">850 KB</span></div>
+                            <button class="text-indigo-600 font-semibold text-xs bg-indigo-50 px-3 py-1.5 rounded-lg">Yüklə</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ŞAGİRD KABİNETİ -->
+        <section id="student" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-2xl font-bold">M</div>
+                    <div>
+                        <h3 class="text-xl font-bold">Murad Əliyev</h3>
+                        <p class="text-xs text-slate-500">III "A" sinfi • Şagird</p>
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <div class="bg-amber-50 p-3 rounded-xl text-center"><span class="block text-xs text-amber-600 font-semibold">Ulduzlar</span><span class="text-lg font-bold text-amber-700">⭐ 34</span></div>
+                    <div class="bg-emerald-50 p-3 rounded-xl text-center"><span class="block text-xs text-emerald-600 font-semibold">Orta Qiymət</span><span class="text-lg font-bold text-emerald-700">9.2</span></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. ELEKTRON DƏRSLƏR -->
+        <section id="lessons" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+                    <span class="bg-blue-50 text-blue-600 text-xs px-2.5 py-1 rounded-full font-semibold">Ana Dili</span>
+                    <h3 class="font-bold text-base">Əlifba və Səslər</h3>
+                    <p class="text-xs text-slate-500">Sait və samit səslərin fərqləndirilməsi, fonetik təhlil qaydaları.</p>
+                    <button onclick="alert('Dərs açılır...')" class="w-full bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-semibold hover:bg-slate-200 transition">Dərsə Bax</button>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+                    <span class="bg-emerald-50 text-emerald-600 text-xs px-2.5 py-1 rounded-full font-semibold">Riyaziyyat</span>
+                    <h3 class="font-bold text-base">Vurma Cədvəli</h3>
+                    <p class="text-xs text-slate-500">2-dən 10-a qədər ədədlərin vurulması və interaktiv məşqlər.</p>
+                    <button onclick="alert('Dərs açılır...')" class="w-full bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-semibold hover:bg-slate-200 transition">Dərsə Bax</button>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-3">
+                    <span class="bg-purple-50 text-purple-600 text-xs px-2.5 py-1 rounded-full font-semibold">Həyat Bilgisi</span>
+                    <h3 class="font-bold text-base">Təbiət və Biz</h3>
+                    <p class="text-xs text-slate-500">Ətraf mühitin qorunması, bitkilər və heyvanlar aləmi.</p>
+                    <button onclick="alert('Dərs açılır...')" class="w-full bg-slate-100 text-slate-700 py-2 rounded-xl text-xs font-semibold hover:bg-slate-200 transition">Dərsə Bax</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. TAPŞIRIQLAR -->
+        <section id="tasks" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
+                <h3 class="text-lg font-bold text-slate-700"><i class="fa-solid fa-list-check text-indigo-600 mr-2"></i> Cari Tapşırıqlar</h3>
+                <div id="taskList" class="space-y-3">
+                    <div class="p-4 bg-slate-50 rounded-xl flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-sm">Riyaziyyat: 5-ə vurma əməli</h4>
+                            <p class="text-xs text-slate-500">Səhifə 42-dəki misalları həll edin.</p>
+                        </div>
+                        <span class="bg-amber-100 text-amber-700 text-xs px-3 py-1 rounded-full font-semibold">Gözlənilir</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. TESTLƏR & QİYMƏTLƏNDİRMƏ -->
+        <section id="tests" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 max-w-xl mx-auto space-y-4">
+                <div class="flex justify-between items-center border-b pb-3">
+                    <h3 class="font-bold text-base text-slate-700">İbtidai Sinif Bilik Yarışması</h3>
+                    <span id="timer" class="text-xs bg-indigo-50 text-indigo-600 px-3 py-1 rounded-full font-bold">⏱️ 02:00</span>
+                </div>
+                <div id="quizContainer" class="space-y-4">
+                    <p class="font-semibold text-sm">1. 7 x 8 hasilinin nəticəsi neçədir?</p>
+                    <div class="space-y-2">
+                        <label class="block p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 text-sm"><input type="radio" name="q1" value="wrong" class="mr-2"> A) 54</label>
+                        <label class="block p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 text-sm"><input type="radio" name="q1" value="correct" class="mr-2"> B) 56</label>
+                        <label class="block p-3 bg-slate-50 rounded-xl cursor-pointer hover:bg-indigo-50 text-sm"><input type="radio" name="q1" value="wrong" class="mr-2"> C) 64</label>
+                    </div>
+                    <button onclick="submitQuiz()" class="w-full bg-indigo-600 text-white py-2.5 rounded-xl text-sm font-semibold hover:bg-indigo-700 transition">Cavabı Yoxla</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-auto py-4 text-center text-xs text-slate-500">
+        <p>&copy; 2026 Pedaqoji Təhsil Portalı. Bütün hüquqlar qorunur.</p>
+    </footer>
+
+    <!-- JavaScript skriptləri -->
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+        }
+
+        function addNewTask() {
+            let title = document.getElementById('taskTitle').value;
+            let desc = document.getElementById('taskDesc').value;
+            if(!title) { alert('Zəhmət olmasa mövzu adını daxil edin.'); return; }
+            
+            let list = document.getElementById('taskList');
+            let item = document.createElement('div');
+            item.className = 'p-4 bg-slate-50 rounded-xl flex justify-between items-center';
+            item.innerHTML = `<div><h4 class="font-bold text-sm">${title}</h4><p class="text-xs text-slate-500">${desc}</p></div><span class="bg-amber-100 text-amber-700 text-xs px-3 py-1 rounded-full font-semibold">Yeni</span>`;
+            list.appendChild(item);
+            alert('Tapşırıq uğurla əlavə edildi!');
+            document.getElementById('taskTitle').value = '';
+            document.getElementById('taskDesc').value = '';
+        }
+
+        function submitQuiz() {
+            let selected = document.querySelector('input[name="q1"]:checked');
+            if(!selected) { alert('Zəhmət olmasa bir cavab seçin.'); return; }
+            if(selected.value === 'correct') {
+                confetti();
+                alert('Təbriklər! Cavab düzgündür. (+10 ulduz)');
+            } else {
+                alert('Təəssüf ki, cavab səhvdir. Yenidən cəhd edin.');
+            }
+        }
+    </script>
+</body>
+</html>
